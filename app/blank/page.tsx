@@ -71,7 +71,10 @@ export default function BlankPage() {
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       <div className="max-w-3xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-black">Allergen Analysis Results</h1>
+        <div className="absolute top-4 left-4">
+          <img src="https://i.postimg.cc/9QBwWZdR/image.png" alt="LOGO" width="144" height="144" />
+        </div>
+        <h1 className="text-5xl font-bold text-center mb-8 text-green-600">Allergen Analysis Results</h1>
         
         {/* Dynamically render results for each URL */}
         {Object.entries(results).map(([url, result]) => (
