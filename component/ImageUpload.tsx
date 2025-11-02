@@ -2,7 +2,11 @@
 
 import { useState, useRef } from 'react';
 
-export default function ImageUpload() {
+interface ImageUploadProps {
+  onImageUpload?: (file: File, dataUrl: string) => void;
+}
+
+export default function ImageUpload({ onImageUpload }: ImageUploadProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -11,7 +15,13 @@ export default function ImageUpload() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
+        const dataUrl = e.target?.result as string;
+        setSelectedImage(dataUrl);
+        
+        // Pass both the file and data URL to parent
+        if (onImageUpload) {
+          onImageUpload(file, dataUrl);
+        }
       };
       reader.readAsDataURL(file);
     }
