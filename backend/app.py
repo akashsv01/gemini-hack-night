@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-load_dotenv()
+load_dotenv(encoding='utf-8')
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
