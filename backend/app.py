@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 from google.genai import types
 import os
@@ -10,13 +11,21 @@ import json
 import threading
 import python_multipart
 from PIL import Image
-from PIL import ImageFile
 from io import BytesIO
-from io import StringIO
 import base64
 
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 load_dotenv()
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
@@ -89,7 +98,7 @@ def check_individual_page(source, restrictions, dict, link):
             "response_schema": RestrictionsResponse,
         }
     )
-    dict[link] = response.text
+    dict[link] = json.loads(response.text)
 
 def identify_food(b64_string: str):
     class Response(BaseModel):
@@ -151,7 +160,9 @@ def run_check(params: InputParams):
     for i in range(len(candidates)):
         recipes = get_recipe_links(candidates[i])
         individual_results = multithreadedCheck(recipes, restrictions)
-        results[i] = individual_results
+        for link, result in individual_results.items():
+            if link != 'length':
+                results[link] = result
 
     return results
 
